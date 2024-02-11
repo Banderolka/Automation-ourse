@@ -10,9 +10,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -22,12 +26,20 @@ public class TrainingAppline {
 
     @Before
     public void before() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
-        driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver-119.exe");
+        ChromeOptions options = new ChromeOptions();
+        options.setBinary(Paths.get("F:\\chrome-win64\\chrome-win64\\chrome.exe").toFile());
+//        options.addArguments("--ignore-certificate-errors");
+//        List<String> insecureUrls = new ArrayList<String>();
+//        insecureUrls.add("https://training.appline.ru");
+//        options.addArguments("profile.managed_insecure_content_allowed_for_urls=https://training.appline.ru");
+        options.setAcceptInsecureCerts(true);
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         driver.get("http://training.appline.ru/user/login");
+
     }
 
     @Test
@@ -52,6 +64,11 @@ public class TrainingAppline {
 
 
 //  Проверка загловка
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         WebElement titlePanel = driver.findElement(By.xpath("//h1[@class = 'oro-subtitle']"));
         Assert.assertEquals("Текст загловка не совпал", "Панель быстрого запуска", titlePanel.getText());
 
@@ -120,6 +137,7 @@ public class TrainingAppline {
 
         Assert.assertEquals("Проверка ошибки у поля не была пройдена",
                 "Список командируемых сотрудников не может быть пустым", validationError.getText());
+
 
 
     }
